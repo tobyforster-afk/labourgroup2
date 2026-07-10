@@ -6,6 +6,7 @@
 
 function showLogin() {
   currentScreen = 'login';
+
   closeMenu();
   hideBackButton();
 
@@ -16,19 +17,49 @@ function showLogin() {
 
       <div class="card">
         <label>Username</label>
-        <input id="loginUsername" type="text" autocomplete="username">
+        <input
+          id="loginUsername"
+          type="text"
+          autocomplete="username"
+          onkeydown="handleLoginKeydown(event)"
+        >
 
         <label>Password</label>
-        <input id="loginPassword" type="password" autocomplete="current-password">
+        <input
+          id="loginPassword"
+          type="password"
+          autocomplete="current-password"
+          onkeydown="handleLoginKeydown(event)"
+        >
 
-        <button onclick="login()">Login</button>
+        <button type="button" onclick="login()">
+          Login
+        </button>
       </div>
     </section>
   `;
+
+  const usernameField = document.getElementById('loginUsername');
+
+  if (usernameField) {
+    usernameField.focus();
+  }
 }
+
+function handleLoginKeydown(event) {
+  if (event && event.key === 'Enter') {
+    event.preventDefault();
+    login();
+  }
+}
+
+/*************************************************************
+ * FIRST ADMIN
+ *************************************************************/
 
 function showFirstAdmin() {
   currentScreen = 'firstAdmin';
+
   closeMenu();
   hideBackButton();
 
@@ -42,23 +73,47 @@ function showFirstAdmin() {
 
       <div class="card">
         <label>Display name</label>
-        <input id="firstName" type="text" autocomplete="name">
+        <input
+          id="firstName"
+          type="text"
+          autocomplete="name"
+        >
 
         <label>Username</label>
-        <input id="firstUsername" type="text" autocomplete="username">
+        <input
+          id="firstUsername"
+          type="text"
+          autocomplete="username"
+        >
 
         <label>Email</label>
-        <input id="firstEmail" type="email" autocomplete="email">
+        <input
+          id="firstEmail"
+          type="email"
+          autocomplete="email"
+        >
 
         <label>Password</label>
-        <input id="firstPassword" type="password" autocomplete="new-password">
+        <input
+          id="firstPassword"
+          type="password"
+          autocomplete="new-password"
+          onkeydown="handleFirstAdminKeydown(event)"
+        >
 
-        <button onclick="createFirstAdmin()">
+        <button type="button" onclick="createFirstAdmin()">
           Create Administrator
         </button>
       </div>
     </section>
   `;
+}
+
+function handleFirstAdminKeydown(event) {
+  if (event && event.key === 'Enter') {
+    event.preventDefault();
+    createFirstAdmin();
+  }
 }
 
 function createFirstAdmin() {
@@ -76,16 +131,16 @@ function createFirstAdmin() {
 
   LG_API.run
     .withSuccessHandler(function(user) {
-      resetClientDataForUserChange();
-
-      currentUser = user;
-      saveCurrentUser(user);
-
-      showDashboard(true);
+      completeLogin(user);
     })
     .withFailureHandler(function(error) {
       showFirstAdmin();
-      alert(error && error.message ? error.message : error);
+
+      alert(
+        error && error.message
+          ? error.message
+          : error
+      );
     })
     .LG_createFirstAdmin(
       username,
@@ -94,6 +149,10 @@ function createFirstAdmin() {
       password
     );
 }
+
+/*************************************************************
+ * LOGIN
+ *************************************************************/
 
 function login() {
   const username = valueOf('loginUsername');
@@ -108,35 +167,75 @@ function login() {
 
   LG_API.run
     .withSuccessHandler(function(user) {
-      resetClientDataForUserChange();
-
-      currentUser = user;
-      saveCurrentUser(user);
-
-      openInitialRouteOrDashboard();
+      completeLogin(user);
     })
     .withFailureHandler(function(error) {
       showLogin();
-      alert(error && error.message ? error.message : error);
+
+      alert(
+        error && error.message
+          ? error.message
+          : error
+      );
     })
-    .LG_login(username, password);
+    .LG_login(
+      username,
+      password
+    );
 }
 
-function logout() {
+/*************************************************************
+ * SUCCESSFUL LOGIN
+ *************************************************************/
+
+function completeLogin(user) {
+  if (!user || !user.token) {
+    showLogin();
+    alert('The server did not return a valid login.');
+    return;
+  }
+
   resetClientDataForUserChange();
 
-  currentUser = null;
-  clearSavedUser();
+  /*
+   * activateUser is defined in App.js. It records the active
+   * token and prevents data from another user being restored.
+   */
+  if (typeof activateUser === 'function') {
+    activateUser(user);
+  } else {
+    currentUser = user;
+  }
 
-  closeMenu();
-  showLogin();
+  saveCurrentUser(user);
+
+  /*
+   * This reads the current browser URL. Therefore:
+   *
+   * /ar/july26
+   *
+   * returns to that Action Report after login. A normal visit
+   * to the homepage opens the dashboard.
+   */
+  openInitialRouteOrDashboard(true);
 }
+
+/*************************************************************
+ * USER CHANGE CACHE RESET
+ *************************************************************/
 
 function resetClientDataForUserChange() {
   if (
     window.LG_Data &&
     typeof LG_Data.clear === 'function'
   ) {
-    LG_Data.clear();
+    try {
+      LG_Data.clear();
+    } catch (error) {
+      console.error(
+        'Could not clear data for user change:',
+        error
+      );
+    }
   }
 }
