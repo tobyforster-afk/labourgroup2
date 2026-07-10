@@ -2,6 +2,7 @@ let currentUser = null;
 let currentScreen = 'loading';
 
 const LG_SAVED_USER_KEY = 'labourGroupUser';
+const LG_ACTIVE_TOKEN_KEY = 'labourGroupActiveToken';
 
 document.addEventListener('DOMContentLoaded', initialiseApp);
 
@@ -40,7 +41,7 @@ function getInitialMeetingId() {
   ).trim();
 }
 
-function openInitialRouteOrDashboard() {
+function openInitialRouteOrDashboard(forceRefresh) {
   const meetingId = getInitialMeetingId();
 
   if (meetingId) {
@@ -48,7 +49,85 @@ function openInitialRouteOrDashboard() {
     return;
   }
 
-  showDashboard();
+  showDashboard(forceRefresh === true);
+}
+
+/*************************************************************
+ * ACTIVE USER TRACKING
+ *************************************************************/
+
+function getCurrentUserToken() {
+  return String(
+    currentUser && currentUser.token
+      ? currentUser.token
+      : ''
+  ).trim();
+}
+
+function getActiveBrowserToken() {
+  try {
+    return String(
+      sessionStorage.getItem(LG_ACTIVE_TOKEN_KEY) || ''
+    ).trim();
+  } catch (error) {
+    return '';
+  }
+}
+
+function setActiveBrowserToken(token) {
+  try {
+    const cleanToken = String(token || '').trim();
+
+    if (cleanToken) {
+      sessionStorage.setItem(LG_ACTIVE_TOKEN_KEY, cleanToken);
+    } else {
+      sessionStorage.removeItem(LG_ACTIVE_TOKEN_KEY);
+    }
+  } catch (error) {}
+}
+
+function hasUserChanged(user) {
+  const nextToken = String(
+    user && user.token
+      ? user.token
+      : ''
+  ).trim();
+
+  const previousToken = getActiveBrowserToken();
+
+  return !!(
+    previousToken &&
+    nextToken &&
+    previousToken !== nextToken
+  );
+}
+
+function clearClientData() {
+  if (
+    window.LG_Data &&
+    typeof LG_Data.clear === 'function'
+  ) {
+    try {
+      LG_Data.clear();
+    } catch (error) {
+      console.error('Could not clear client cache:', error);
+    }
+  }
+}
+
+function activateUser(user) {
+  const changed = hasUserChanged(user);
+
+  if (changed) {
+    clearClientData();
+  }
+
+  currentUser = user || null;
+
+  const token = getCurrentUserToken();
+  setActiveBrowserToken(token);
+
+  return changed;
 }
 
 /*************************************************************
@@ -65,23 +144,36 @@ function startFastBootstrap() {
   }
 
   if (savedUser && savedUser.token) {
-    currentUser = savedUser;
+    const changed = activateUser(savedUser);
 
-    restoreClientCacheIfAvailable();
-    openInitialRouteOrDashboard();
+    if (!changed) {
+      restoreClientCacheIfAvailable();
+    }
+
+    openInitialRouteOrDashboard(changed);
     verifyBootstrapInBackground();
     return;
   }
 
+  setActiveBrowserToken('');
   loadBootstrap(true);
 }
 
 function restoreClientCacheIfAvailable() {
-  if (!window.LG_Data) {
+  if (
+    !window.LG_Data ||
+    !currentUser ||
+    !currentUser.token
+  ) {
     return;
   }
 
   try {
+    if (typeof LG_Data.restoreSessionCache === 'function') {
+      LG_Data.restoreSessionCache();
+      return;
+    }
+
     if (typeof LG_Data.restore === 'function') {
       LG_Data.restore();
       return;
@@ -96,7 +188,10 @@ function restoreClientCacheIfAvailable() {
       LG_Data.hydrate();
     }
   } catch (error) {
-    /* Old or corrupt browser cache must not stop the app opening. */
+    /*
+     * Old or corrupt browser cache must not stop the app
+     * from opening.
+     */
   }
 }
 
@@ -107,8 +202,8 @@ function verifyBootstrapInBackground() {
     })
     .withFailureHandler(function() {
       /*
-       * Keep the already-rendered cached screen visible if this lightweight
-       * verification call fails. Normal data calls will still report errors.
+       * Keep the already-rendered screen visible if this
+       * lightweight verification call fails.
        */
     })
     .LabourGroup_getBootstrapStatus();
@@ -138,12 +233,11 @@ function handleBootstrapStatus(status, blocking) {
     status = status || {};
 
     if (status.needsFirstAdmin) {
+      clearClientData();
+
       currentUser = null;
       clearSavedUser();
-
-      if (window.LG_Data && typeof LG_Data.clear === 'function') {
-        LG_Data.clear();
-      }
+      setActiveBrowserToken('');
 
       showFirstAdmin();
       return;
@@ -152,17 +246,25 @@ function handleBootstrapStatus(status, blocking) {
     const savedUser = currentUser || getSavedUser();
 
     if (savedUser && savedUser.token) {
-      currentUser = savedUser;
+      const changed = activateUser(savedUser);
 
       if (blocking) {
-        restoreClientCacheIfAvailable();
-        openInitialRouteOrDashboard();
+        if (!changed) {
+          restoreClientCacheIfAvailable();
+        }
+
+        openInitialRouteOrDashboard(changed);
       }
 
       return;
     }
 
+    clearClientData();
+
     currentUser = null;
+    clearSavedUser();
+    setActiveBrowserToken('');
+
     showLogin();
   } catch (error) {
     renderBootstrapError('Java error', error);
@@ -180,10 +282,44 @@ function renderBootstrapError(title, error) {
     <section class="page">
       <div class="card">
         <h1>${escapeHtml(title || 'Error')}</h1>
-        <p>${escapeHtml(error && error.message ? error.message : error)}</p>
+        <p>${escapeHtml(
+          error && error.message
+            ? error.message
+            : error
+        )}</p>
       </div>
     </section>
   `;
+}
+
+/*************************************************************
+ * LOGOUT
+ *
+ * This deliberately reloads the page after clearing the
+ * login. Reloading cancels any requests still running for
+ * the previous user.
+ *************************************************************/
+
+function logout() {
+  closeMenu();
+
+  /*
+   * Clear the cache while currentUser still contains the old
+   * token, so the correct token-specific session cache is
+   * removed.
+   */
+  clearClientData();
+
+  currentUser = null;
+  clearSavedUser();
+  setActiveBrowserToken('');
+
+  /*
+   * A real page reload prevents an old API request completing
+   * after logout and putting the previous user's data back
+   * into memory.
+   */
+  window.location.reload();
 }
 
 /*************************************************************
@@ -191,13 +327,17 @@ function renderBootstrapError(title, error) {
  *************************************************************/
 
 document.addEventListener('visibilitychange', function() {
-  if (document.hidden || !window.LG_Data) {
+  if (
+    document.hidden ||
+    !window.LG_Data ||
+    !currentUser ||
+    !currentUser.token ||
+    currentScreen === 'login'
+  ) {
     return;
   }
 
   if (
-    currentUser &&
-    currentUser.token &&
     typeof LG_Data.refreshAppInBackground === 'function'
   ) {
     LG_Data.refreshAppInBackground();
@@ -205,7 +345,14 @@ document.addEventListener('visibilitychange', function() {
 });
 
 window.addEventListener('pageshow', function(event) {
-  if (event.persisted) {
-    restoreClientCacheIfAvailable();
+  if (
+    !event.persisted ||
+    !currentUser ||
+    !currentUser.token ||
+    currentScreen === 'login'
+  ) {
+    return;
   }
+
+  restoreClientCacheIfAvailable();
 });
