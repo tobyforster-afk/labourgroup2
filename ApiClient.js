@@ -19,11 +19,19 @@ const LG_API = (() => {
     const text = await response.text();
     let result;
 
-    try {
-      result = JSON.parse(text);
-    } catch (error) {
-      throw new Error('The Labour.Group API returned an invalid response.');
-    }
+  try {
+  result = JSON.parse(text);
+} catch (error) {
+  console.error('Invalid API response:', {
+    status: response.status,
+    contentType: response.headers.get('content-type') || '',
+    responseText: text
+  });
+
+  throw new Error(
+    'Invalid API response: ' + String(text || '').slice(0, 300)
+  );
+}
 
     if (!response.ok || !result || result.ok !== true) {
       throw new Error(
