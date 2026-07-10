@@ -2,39 +2,55 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1, viewport-fit=cover"
+  >
 
   <title>Labour.Group</title>
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="./styles.css">
+  <link
+    rel="preconnect"
+    href="https://fonts.gstatic.com"
+    crossorigin
+  >
+
+  <link
+    href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800;900&display=swap"
+    rel="stylesheet"
+  >
+
+  <!-- Leading slash means always load from the site root. -->
+  <link rel="stylesheet" href="/styles.css">
 
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-title" content="Labour.Group">
   <meta name="apple-mobile-web-app-status-bar-style" content="default">
   <meta name="theme-color" content="#C40F3A">
 </head>
+
 <body>
   <div id="app"></div>
 
   <script>
-    const LG_INITIAL_MEETING_ID = new URLSearchParams(window.location.search).get('meeting') || '';
+    const LG_INITIAL_MEETING_ID =
+      new URLSearchParams(window.location.search).get('meeting') || '';
   </script>
 
-  <script src="./ApiClient.js"></script>
-  <script src="./Mobile.js"></script>
-  <script src="./Utils.js"></script>
-  <script src="./Navigation.js"></script>
-  <script src="./Login.js"></script>
-  <script src="./Components.js"></script>
-  <script src="./DataCache.js"></script>
-  <script src="./Dashboard.js"></script>
-  <script src="./Councillors.js"></script>
-  <script src="./Committees.js"></script>
-  <script src="./Meetings.js"></script>
-  <script src="./ActionPlansView.js"></script>
-  <script src="./App.js"></script>
+  <script src="/ApiClient.js"></script>
+  <script src="/Mobile.js"></script>
+  <script src="/Utils.js"></script>
+  <script src="/Navigation.js"></script>
+  <script src="/Login.js"></script>
+  <script src="/Components.js"></script>
+  <script src="/DataCache.js"></script>
+  <script src="/Dashboard.js"></script>
+  <script src="/Councillors.js"></script>
+  <script src="/Committees.js"></script>
+  <script src="/Meetings.js"></script>
+  <script src="/ActionPlansView.js"></script>
+  <script src="/App.js"></script>
 </body>
 </html>
