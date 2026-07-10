@@ -29,7 +29,7 @@ const LG_API = (() => {
   });
 
   throw new Error(
-    'Invalid API response: ' + String(text || '').slice(0, 300)
+    'Invalid API response: ' + String(text || '')   .replace(/<style[\s\S]*?<\/style>/gi, '')   .replace(/<[^>]+>/g, ' ')   .replace(/\s+/g, ' ')   .trim()   .slice(0, 1500)
   );
 }
 
