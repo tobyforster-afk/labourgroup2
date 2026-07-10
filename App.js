@@ -41,7 +41,26 @@ function getInitialMeetingId() {
   ).trim();
 }
 
+function getInitialActionReportSlug() {
+  const path = String(window.location.pathname || '')
+    .trim()
+    .toLowerCase();
+
+  const match = path.match(/^\/ar\/([a-z0-9_-]+)\/?$/i);
+
+  return match
+    ? String(match[1] || '').trim().toLowerCase()
+    : '';
+}
+
 function openInitialRouteOrDashboard(forceRefresh) {
+  const actionReportSlug = getInitialActionReportSlug();
+
+  if (actionReportSlug) {
+    showActionPlanBySlug(actionReportSlug);
+    return;
+  }
+
   const meetingId = getInitialMeetingId();
 
   if (meetingId) {
@@ -50,6 +69,36 @@ function openInitialRouteOrDashboard(forceRefresh) {
   }
 
   showDashboard(forceRefresh === true);
+}
+
+function showActionPlanBySlug(slug) {
+  const cleanSlug = String(slug || '')
+    .trim()
+    .toLowerCase();
+
+  if (!cleanSlug) {
+    showError('Missing action report link.');
+    return;
+  }
+
+  currentScreen = 'actionPlan';
+
+  closeMenu();
+  showBackButton();
+  setLoading('Loading action report...');
+
+  LG_API.run
+    .withSuccessHandler(function(data) {
+      cacheActionPlanData(data);
+      renderActionPlan(data);
+    })
+    .withFailureHandler(function(error) {
+      renderBootstrapError('Action report not found', error);
+    })
+    .LabourGroup_getActionPlanBySlug(
+      cleanSlug,
+      getAuthToken()
+    );
 }
 
 /*************************************************************
@@ -294,31 +343,17 @@ function renderBootstrapError(title, error) {
 
 /*************************************************************
  * LOGOUT
- *
- * This deliberately reloads the page after clearing the
- * login. Reloading cancels any requests still running for
- * the previous user.
  *************************************************************/
 
 function logout() {
   closeMenu();
 
-  /*
-   * Clear the cache while currentUser still contains the old
-   * token, so the correct token-specific session cache is
-   * removed.
-   */
   clearClientData();
 
   currentUser = null;
   clearSavedUser();
   setActiveBrowserToken('');
 
-  /*
-   * A real page reload prevents an old API request completing
-   * after logout and putting the previous user's data back
-   * into memory.
-   */
   window.location.reload();
 }
 
