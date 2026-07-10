@@ -3303,8 +3303,8 @@ body.meeting-sub-open {
   align-items: stretch;
 }
 
-</style>
-<style>
+
+
 /* Meeting save state copied across from the action-plan live save behaviour. */
 .meeting-live-save.is-saving .meeting-live-save-dot {
   background: var(--lg-orange);
@@ -3323,8 +3323,8 @@ body.meeting-sub-open {
   from { opacity: .45; transform: scale(.85); }
   to { opacity: 1; transform: scale(1.15); }
 }
-</style>
-<style>
+
+
 /* =========================================================
    MEETING APOLOGY REQUEST
    ========================================================= */
@@ -3430,3 +3430,496 @@ body.meeting-sub-open {
   white-space: pre-wrap;
   overflow: auto;
 }
+
+/* =========================================================
+   RESPONSIVE DENSITY SYSTEM — JULY 2026
+   Desktop is deliberately compact; phones retain generous
+   touch targets and larger readable type.
+   ========================================================= */
+
+/* Desktop / shared defaults */
+:root {
+  --lg-header-height: 72px;
+  --page-pad: clamp(18px, 2.2vw, 34px);
+  --page-pad-small: 15px;
+  --page-pad-desktop: 34px;
+
+  --font-body: 16px;
+  --font-small: 14px;
+  --font-label: 12px;
+  --font-button: 14px;
+  --font-h1: clamp(30px, 3vw, 42px);
+  --font-h2: clamp(21px, 2vw, 28px);
+  --font-lede: 17px;
+  --font-title: 25px;
+
+  --radius-sm: 9px;
+  --radius-md: 13px;
+  --radius-lg: 17px;
+
+  --space-xs: 5px;
+  --space-sm: 9px;
+  --space-md: 14px;
+  --space-lg: 19px;
+  --space-xl: 22px;
+
+  --tap-sm: 42px;
+  --tap-md: 48px;
+  --tap-lg: 56px;
+
+  --avatar-sm: 52px;
+  --avatar-lg: 112px;
+}
+
+body {
+  padding-bottom: 24px;
+  font-size: var(--font-body);
+  line-height: 1.35;
+}
+
+#topBar {
+  height: var(--lg-header-height);
+  margin-bottom: 20px;
+  padding: 0 14px;
+  grid-template-columns: 52px 1fr 52px;
+}
+
+#title { font-size: var(--font-title); }
+
+#backButton,
+#menuButton {
+  width: 52px;
+  min-width: 52px;
+  height: 52px;
+  min-height: 52px;
+}
+
+#backButton { font-size: 34px; }
+#menuButton { font-size: 28px; }
+
+#content {
+  max-width: 1440px;
+}
+
+#mainMenu {
+  left: auto;
+  width: min(390px, 38vw);
+}
+
+#mainMenu button {
+  min-height: 68px;
+  padding: 18px 24px;
+  font-size: 20px;
+}
+
+.page h1 { margin-bottom: 12px; }
+.page h2 { margin-bottom: 10px; }
+.lede { margin-bottom: 18px; }
+.cache-note {
+  min-height: 30px;
+  margin-bottom: 16px;
+  padding: 0 12px;
+  font-size: 11px;
+}
+
+.card {
+  margin-bottom: 18px;
+  padding: 20px;
+}
+.card p {
+  margin-bottom: 11px;
+  font-size: var(--font-body);
+}
+
+button {
+  min-height: 44px;
+  padding: 11px 15px;
+  border-radius: 11px;
+  font-size: var(--font-button);
+}
+
+input,
+textarea,
+select {
+  min-height: 44px;
+  margin-bottom: 14px;
+  padding: 10px 12px;
+  border-radius: 10px;
+  font-size: 16px;
+}
+
+label { margin-bottom: 6px; }
+.card button + button { margin-top: 10px; }
+
+.dashboard-page { gap: 14px; }
+.dashboard-section-label { font-size: 12px; }
+.dashboard-attendance-card { padding: 16px; }
+.dashboard-attendance-head { margin-bottom: 13px; }
+.dashboard-attendance-head strong { font-size: 22px; }
+.dashboard-attendance-head span { font-size: 13px; }
+.dashboard-attendance-score {
+  min-width: 82px;
+  min-height: 52px;
+  padding: 8px 12px;
+  border-radius: 14px;
+  font-size: 25px;
+}
+.dashboard-attendance-grid { gap: 7px; }
+.dashboard-attendance-grid div {
+  min-height: 55px;
+  padding: 8px 5px;
+  border-radius: 10px;
+}
+.dashboard-attendance-grid span { font-size: 9px; }
+.dashboard-attendance-grid strong { margin-top: 4px; font-size: 21px; }
+
+.dashboard-widget-grid { gap: 10px; }
+.dashboard-widget {
+  min-height: 96px;
+  padding: 16px;
+  border-radius: 16px;
+}
+.dashboard-widget span { font-size: 40px; }
+.dashboard-widget strong { margin-top: 7px; font-size: 12px; }
+
+.dashboard-month-grid { gap: 18px; }
+.dashboard-meeting-panel { gap: 9px; }
+.dashboard-meeting-row,
+.dashboard-filter-row {
+  min-height: 76px;
+  padding: 12px;
+  border-radius: 14px;
+  grid-template-columns: 48px 1fr 24px;
+  gap: 12px;
+}
+
+.stat-card {
+  min-height: 100px;
+  padding: 20px;
+}
+.stat-card span { font-size: 46px; }
+.stat-card strong { margin-top: 7px; font-size: 13px; }
+
+.list { gap: 9px; }
+.list-row {
+  min-height: 70px;
+  padding: 13px 15px;
+  border-radius: 14px;
+  gap: 12px;
+}
+.list-row strong { font-size: 17px; }
+.list-row span { margin-top: 3px; font-size: 13px; }
+.list-row em { font-size: 29px; }
+
+.ward-section { margin-bottom: 22px; }
+.ward-title { margin-bottom: 10px; font-size: 24px; }
+.councillor-row {
+  min-height: 78px;
+  padding: 13px 15px;
+  grid-template-columns: var(--avatar-sm) 1fr 24px;
+  gap: 13px;
+}
+.councillor-row-text strong { font-size: 18px; }
+.councillor-row-text span { margin-top: 3px; font-size: 13px; }
+.councillor-row em,
+.meeting-row em { font-size: 29px; }
+.avatar { border-width: 3px; font-size: 17px; }
+.avatar-large { border-width: 4px; font-size: 34px; }
+.profile-hero {
+  gap: 20px;
+  margin-bottom: 22px;
+}
+.profile-hero h1 { margin-bottom: 5px; font-size: 35px; }
+.profile-hero p { margin-bottom: 6px; font-size: 17px; }
+.profile-hero span { font-size: 16px; }
+
+.meeting-list {
+  max-height: 620px;
+  border-radius: 16px;
+}
+.meeting-row {
+  min-height: 84px;
+  padding: 14px 16px;
+  grid-template-columns: 52px 1fr 25px;
+  gap: 13px;
+}
+.meeting-icon {
+  width: 52px;
+  height: 52px;
+  font-size: 23px;
+}
+.meeting-text strong { font-size: 17px; }
+.meeting-text span { margin-top: 3px; font-size: 13px; }
+.loading { min-height: calc(100vh - 120px); font-size: 17px; }
+
+/* Dense desktop layouts */
+@media (min-width: 900px) {
+  .dashboard-widget-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .dashboard-month-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    align-items: start;
+  }
+
+  .action-plan-home {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 18px;
+  }
+  .action-plan-home > h1,
+  .action-plan-home > .lede {
+    grid-column: 1 / -1;
+  }
+
+  .meeting-summary-grid,
+  .vote-count-grid {
+    gap: 8px;
+  }
+
+  .meeting-member-list,
+  .action-plan-items {
+    gap: 12px;
+  }
+
+  .action-plan-item,
+  .meeting-member-card,
+  .vote-card {
+    padding: 18px;
+    border-radius: 16px;
+  }
+
+  .action-plan-item-head,
+  .meeting-member-head {
+    gap: 12px;
+  }
+
+  .action-plan-kicker h2,
+  .action-plan-item h2 {
+    font-size: 22px;
+  }
+
+  .action-plan-nav {
+    gap: 7px;
+  }
+
+  .action-plan-nav-pill {
+    min-height: 52px;
+    padding: 8px 11px;
+  }
+
+  .action-plan-view-grid,
+  .action-plan-question-grid {
+    gap: 10px;
+  }
+
+  .action-plan-view-block,
+  .action-plan-question-person {
+    padding: 12px;
+    border-radius: 12px;
+  }
+}
+
+/* Tablets */
+@media (min-width: 701px) and (max-width: 899px) {
+  :root {
+    --font-body: 17px;
+    --font-h1: 38px;
+    --font-h2: 27px;
+    --font-lede: 19px;
+  }
+
+  #content { max-width: 920px; }
+  .dashboard-widget-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+}
+
+/* Phones: deliberately larger and easier to touch */
+@media (max-width: 700px) {
+  :root {
+    --lg-header-height: 82px;
+    --page-pad: 15px;
+    --font-body: 18px;
+    --font-small: 16px;
+    --font-label: 13px;
+    --font-button: 16px;
+    --font-h1: clamp(34px, 10vw, 44px);
+    --font-h2: 27px;
+    --font-lede: 20px;
+    --font-title: 27px;
+    --radius-sm: 12px;
+    --radius-md: 17px;
+    --radius-lg: 21px;
+    --space-xl: 22px;
+    --avatar-sm: 64px;
+    --avatar-lg: 126px;
+  }
+
+  body { padding-bottom: 30px; }
+
+  #topBar {
+    margin-bottom: 20px;
+    padding: 0 8px;
+    grid-template-columns: 60px 1fr 60px;
+  }
+
+  #backButton,
+  #menuButton {
+    width: 60px;
+    min-width: 60px;
+    height: 60px;
+    min-height: 60px;
+  }
+
+  #backButton { font-size: 40px; }
+  #menuButton { font-size: 32px; }
+
+  #mainMenu {
+    left: 16vw;
+    width: auto;
+  }
+
+  #mainMenu button {
+    min-height: 82px;
+    padding: 22px 24px;
+    font-size: 23px;
+  }
+
+  .page h1 { margin-bottom: 14px; }
+  .lede { margin-bottom: 22px; line-height: 1.4; }
+
+  .card {
+    margin-bottom: 20px;
+    padding: 21px;
+  }
+
+  button {
+    min-height: 54px;
+    padding: 14px 17px;
+    border-radius: 14px;
+  }
+
+  input,
+  textarea,
+  select {
+    min-height: 52px;
+    margin-bottom: 17px;
+    padding: 13px 14px;
+    border-radius: 13px;
+    font-size: 18px !important;
+  }
+
+  .dashboard-page { gap: 17px; }
+  .dashboard-attendance-card { padding: 18px; }
+  .dashboard-attendance-head strong { font-size: 25px; }
+  .dashboard-attendance-head span { font-size: 14px; }
+  .dashboard-attendance-score {
+    min-width: 88px;
+    min-height: 58px;
+    font-size: 27px;
+  }
+  .dashboard-attendance-grid { gap: 6px; }
+  .dashboard-attendance-grid div { min-height: 64px; padding: 9px 4px; }
+  .dashboard-attendance-grid span { font-size: 9px; }
+  .dashboard-attendance-grid strong { font-size: 23px; }
+
+  .dashboard-widget-grid { grid-template-columns: 1fr; gap: 11px; }
+  .dashboard-widget { min-height: 112px; padding: 19px; }
+  .dashboard-widget span { font-size: 49px; }
+  .dashboard-widget strong { font-size: 14px; }
+
+  .list { gap: 11px; }
+  .list-row {
+    min-height: 82px;
+    padding: 16px;
+    border-radius: 17px;
+  }
+  .list-row strong { font-size: 20px; }
+  .list-row span { margin-top: 5px; font-size: 16px; }
+  .list-row em { font-size: 34px; }
+
+  .councillor-row {
+    min-height: 92px;
+    padding: 15px;
+    grid-template-columns: var(--avatar-sm) 1fr 26px;
+    gap: 14px;
+  }
+  .councillor-row-text strong { font-size: 21px; }
+  .councillor-row-text span { font-size: 16px; }
+
+  .profile-hero {
+    grid-template-columns: var(--avatar-lg) 1fr;
+    gap: 17px;
+    margin-bottom: 24px;
+  }
+  .profile-hero h1 { font-size: 34px; }
+  .profile-hero p { font-size: 18px; }
+  .profile-hero span { font-size: 17px; }
+
+  .meeting-list { max-height: none; }
+  .meeting-row {
+    min-height: 98px;
+    padding: 16px;
+    grid-template-columns: 58px 1fr 22px;
+    gap: 14px;
+  }
+  .meeting-icon { width: 58px; height: 58px; font-size: 26px; }
+  .meeting-text strong { font-size: 20px; }
+  .meeting-text span { margin-top: 5px; font-size: 16px; }
+
+  .dashboard-meeting-row,
+  .dashboard-filter-row {
+    min-height: 94px;
+    padding: 15px;
+    grid-template-columns: 58px 1fr 24px;
+    gap: 14px;
+  }
+
+  .action-plan-nav {
+    scrollbar-width: none;
+  }
+  .action-plan-nav::-webkit-scrollbar { display: none; }
+
+  .action-plan-nav-pill,
+  .small-action,
+  .action-plan-speak-button,
+  .action-plan-live-button,
+  .action-plan-icon-button,
+  .meeting-status-button,
+  .meeting-member-action {
+    min-height: 48px;
+  }
+
+  .action-plan-card-actions,
+  .meeting-member-actions {
+    gap: 8px;
+  }
+
+  .meeting-apology-actions {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 390px) {
+  :root {
+    --page-pad: 12px;
+    --font-title: 23px;
+    --font-h1: 34px;
+  }
+
+  #topBar { grid-template-columns: 54px 1fr 54px; }
+  #backButton,
+  #menuButton {
+    width: 54px;
+    min-width: 54px;
+    height: 54px;
+    min-height: 54px;
+  }
+
+  .card { padding: 17px; }
+  .dashboard-attendance-grid { gap: 4px; }
+  .dashboard-attendance-grid span { font-size: 8px; }
+  .dashboard-attendance-grid strong { font-size: 20px; }
+}
+
